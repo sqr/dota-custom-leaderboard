@@ -1,32 +1,35 @@
 import React, {useEffect, useState} from 'react'
 
 import { firestore, app } from '../firebase/clientApp';
-import { collection, QueryDocumentSnapshot, DocumentData, query, where, limit, getDocs } from "@firebase/firestore";
+import { collection, QueryDocumentSnapshot, DocumentData, query, where, limit, getDocs, doc } from "@firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 export default function Fire() {
     const [leaderboards, setLeaderboards] = useState([])    
     const leaderboardsCollection = collection(firestore, 'leaderboards');
+    const usersCollection = collection(firestore, 'users');
     const auth = getAuth(app)
     const [user, loading, error] = useAuthState(auth)
-    console.log(user)
 
-    const getNotes = () => {
-        const leaderboardsQuery = query(leaderboardsCollection);
-        getDocs(leaderboardsQuery)
-            .then((data) => {
-                setLeaderboards(data.docs.map((item) => {
-                    return { ...item.data(), id: item.id }
-                }));
-            })
-    }
     useEffect(() => {
-        getNotes();
-    }, [])
-    
+        if (user) {
+            console.log('user detected')
+            const userRef = doc(usersCollection, user.uid)
+            const leaderboardsQuery = query(leaderboardsCollection, where('createdBy', '==', userRef));
+            getDocs(leaderboardsQuery)
+                .then((data) => {
+                    data.forEach((doc) => {
+                        console.log(doc.id, " => ", doc.data());
+                        let dato = doc.data()
+                        dato.id = doc.id
+                        setLeaderboards(oldLeaderboards => [...oldLeaderboards, dato])
+                    })
+            })
+        } 
+    }, [user])
+
     const listLeaderboards = leaderboards.map((leaderboard) => {
-        console.log(leaderboard);
         <li>{leaderboard.name}</li>
     });
     return (

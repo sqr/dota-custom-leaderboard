@@ -2,12 +2,12 @@ import React from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { app } from '../firebase/clientApp';
 import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, getAuth } from 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Router, useRouter } from 'next/router'
+
 
 const provider = new GoogleAuthProvider();
 const autho = getAuth(app)
-
-import NoSSRWrapper from "../components/NoSSR";
-
 getRedirectResult(autho)
   .then((result) => {
     // This gives you a Google Access Token. You can use it to access Google APIs.
@@ -28,13 +28,18 @@ getRedirectResult(autho)
     // ...
   });
 
-export default function auth(props) {
+export default function Auth() {
+    const [user, loading, error] = useAuthState(autho)
+    const router = useRouter()
+    if (user) {
+        router.push('/fire')
+    }
 
     return (
-      <div>auth
-              <button onClick={() => signInWithRedirect(autho, provider)}>
-      Login
-    </button>
-            </div>
+    <div>auth
+        <button onClick={() => signInWithRedirect(autho, provider)}>
+        Login
+        </button>
+    </div>
   )
 }
