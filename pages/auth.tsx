@@ -31,12 +31,10 @@ getRedirectResult(autho)
 export default function auth(props) {
 
     return (
-        <NoSSRWrapper>
       <div>auth
               <button onClick={() => signInWithRedirect(autho, provider)}>
       Login
     </button>
             </div>
-            </NoSSRWrapper>
   )
 }
