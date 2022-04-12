@@ -5,6 +5,8 @@ import { collection, QueryDocumentSnapshot, DocumentData, query, where, limit, g
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
+import Header from "../components/Header"
+
 export default function Fire() {
     const [leaderboards, setLeaderboards] = useState([])    
     const leaderboardsCollection = collection(firestore, 'leaderboards');
@@ -33,7 +35,8 @@ export default function Fire() {
         <li>{leaderboard.name}</li>
     });
     return (
-    <div>
+        <div>
+        <Header />
         firestore
             {user ? user.displayName : 'No user'}
             <ul>
