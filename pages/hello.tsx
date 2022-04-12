@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
+import Header from '../components/Header'
 
 const fetcher = async (url) => {
   const res = await fetch(url)
@@ -20,7 +21,8 @@ export default function Person() {
   if (error) return <div>{error.message}</div>
   if (!data) return <div>Loading...</div>
 
-  return (
-      <h1>Digamos {data.name}</h1>
+    return (
+      <><Header /><h1>Digamos {data.name}</h1></>
+      
   )
 }
